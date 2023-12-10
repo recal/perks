@@ -34,21 +34,22 @@ func main() {
 
 	chunks := chunkFiles(files, chunkSize)
 
+
 	var wg sync.WaitGroup
-	for _, chunk := range chunks {
+	for idx, chunk := range chunks {
 		wg.Add(1)
 		go func(files []fs.DirEntry) {
 			defer wg.Done()
-			processImageChunk(files)
+			processImageChunk(idx, files)
 		}(chunk)
 	}
 
 	wg.Wait()
 }
 
-func processImageChunk(files []fs.DirEntry) {
-	for _, file := range files {
-		fmt.Println(fmt.Sprintf("Processing image at path: %s", file.Name()))
+func processImageChunk(idx int, files []fs.DirEntry) {
+	for pidx, file := range files {
+		fmt.Println(fmt.Sprintf("[CHUNK %d // IDX %d]: Processing image at path: %s", idx, pidx, file.Name()))
 
 		rawFilePath := filepath.Join(rawFolderPath, file.Name())
 		outputFilePath := filepath.Join(outputFolderPath, file.Name())
